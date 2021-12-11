@@ -49,19 +49,30 @@ except ImportError:
     print("Debug.py, TrafficLight.py, Intersectrion.py, or GlobalConstant.py didn't import correctly")
     print("Please verify that those files are in same directory as the Controller.py")
 
+# Global variables to Controller.py
 possibleStates = ['ALL_RED', 'NS_TURNING', 'NS_THROUGH', 'EW_TURNING', 'EW_THROUGH']
+machine = Machine(model=Intersection.controlSystem, states=possibleStates, initial='ALL_RED')
 
+# Global "CONSTANTS" to Controller.py
+UNIT_TEST_MODE = True
 DEBUG_STATEMENTS_ON = True
-TEST_MODE = False
+THIS_CODES_FILENAME = os.path.basename(__file__)
+DebugObject = Debug(DEBUG_STATEMENTS_ON, THIS_CODES_FILENAME)
 
 
-def UnitTest():
-    thisCodesFilename = os.path.basename(__file__)
-    DebugObject = Debug(DEBUG_STATEMENTS_ON, thisCodesFilename)
+def UnitTest(testCase):
 
-    randomSensors = GetActiveVehicleSensors()
-    DebugObject.Dprint(randomSensors)
-    DebugObject.Lprint(GC.RED)
+    if(testCase == 1):
+        randomSensors = GetActiveVehicleSensors()
+        DebugObject.Dprint(randomSensors)
+    elif(testCase == 2):
+        TrafficLightObjectList = TrafficLight(GC.USA_INTERSECTION_ID, 1, GC.GREEN)
+        TrafficLightObjectList.append(TrafficLight(GC.USA_INTERSECTION_ID, 2, GC.RED))
+        UpdateTrafficLights(TrafficLightObjectList, nextState)
+        DebugObject.Dprint(TrafficLightObjectList.currentColor)
+    elif(testCase == 3):
+        print("TODO")
+        assert GC.RED == 0
 
 
 def GetActiveVehicleSensors():
@@ -112,12 +123,11 @@ def main():
     # Define the 8 lane traffic light intersection outlined in take-home_pdf_specification.pdf
     TrafficLightObjectList = []
     for i in range(1, GC.LANE_COUNT+1):
-        TrafficLightObjectList.append(TrafficLight(GC.USA_INTERSECTION_ID, i, GC.RED))   # NOQA: F405
+        TrafficLightObjectList.append(TrafficLight(GC.USA_INTERSECTION_ID, i, GC.RED))
 
-    print("STARTING LOOP")
+    Debug.Dprint("STARTING LOOP")
     startTime = time.time()  # seconds since January 1, 1970, 00:00:00 at UTC is epoch DONT use on 32-bit systems
 
-    machine = Machine(model=Intersection.controlSystem, states=possibleStates, initial='ALL_RED')
     nextState = possibleStates[0]
 
     while():
@@ -141,7 +151,7 @@ def main():
         time.sleep(0.5) # Make while loop last 1 second
 
 if __name__ == "__main__":
-    if(TEST_MODE):
-        UnitTest()
+    if(UNIT_TEST_MODE):
+        UnitTest(2)
     else:
         main()
