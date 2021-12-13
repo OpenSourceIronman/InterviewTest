@@ -4,17 +4,19 @@ __author__  = "Blaze Sanders"
 __email__   = "blaze.d.a.sanders@gmail.com"
 __company__ = "Loft Orbitial"
 __status__  = "Development"
-__date__    = "Late Updated: 2021-12-09"
-__doc__     = "Control a 4-way traffic intersection with only RED-GREEN lights"
+__date__    = "Late Updated: 2021-12-12"
+__doc__     = "Control a 4-way traffic intersection with 8 RED-GREEN lights"
+__link__    = https://github.com/OpenSourceIronman/InterviewTest
 """
 
 # A lightweight, object-oriented Python state machine library
 # https://pypi.org/project/transitions/
-from transitions import Machine
+from transitions import Machine, State
 
-# Define a system global clock
+# Pause program execution and elect seed for pseudo random generator
 # https://docs.python.org/3/library/datetime.html#datetime.time
-import time, datetime   # NOQA: E401
+import time
+import datetime
 
 # Create random sensor events to simulate traffic
 # https://docs.python.org/3/library/random.html
@@ -34,13 +36,13 @@ import pyautogui
 
 try:
     # Generate a timestamped .txt data logging file and custom terminal debugging output
-    import Debug
+    import Debug as Debug
 
     # Two color (red & green) traffic light
-    import TrafficLight
+    import TrafficLight as TL
 
     # State Machine class with ?singelton? "pass"
-    import Intersection
+    import Intersection as Intersection
 
     # Useful global constants used across all classes
     import GlobalConstant as GC
@@ -49,26 +51,48 @@ except ImportError:
     print("Debug.py, TrafficLight.py, Intersectrion.py, or GlobalConstant.py didn't import correctly")
     print("Please verify that those files are in same directory as the Controller.py")
 
-# Global variables to Controller.py
-possibleStates = ['ALL_RED', 'NS_TURNING', 'NS_THROUGH', 'EW_TURNING', 'EW_THROUGH']
-machine = Machine(model=Intersection.controlSystem, states=possibleStates, initial='ALL_RED')
+# Global variables of Controller.py that define the overall State Machine
+possibleStates = [State(name='ALL_RED'),
+                  State(name='NS_TURNING'), State(name='NS_THROUGH'),
+                  State(name='EW_TURNING'), State(name='EW_THROUGH')]
+
+trafficFlowTransitions = [
+    {'trigger': 'ALLOW_NS_TURNING', 'source': 'EW_THROUGH', 'dest': 'NS_TURNING'},
+    {'trigger': 'NS_THROUGH_ONLY', 'source': 'NS_TURNING', 'dest': 'NS_THROUGH'},
+    {'trigger': 'ALLOW_EW_TURNING', 'source': 'NS_THROUGH', 'dest': 'EW_TURNING'},
+    {'trigger': 'EW_THROUGH_ONLY', 'source': 'EW_TURNING', 'dest': 'EW_THROUGH'},
+
+    {'trigger': 'emergencyStop', 'source': 'NS_TURNING', 'dest': 'ALL_RED'},
+    {'trigger': 'emergencyStop', 'source': 'NS_THROUGH', 'dest': 'ALL_RED'},
+    {'trigger': 'emergencyStop', 'source': 'EW_TURNING', 'dest': 'ALL_RED'},
+    {'trigger': 'emergencyStop', 'source': 'EW_THROUGH', 'dest': 'ALL_RED'},
+
+    {'trigger': 'start', 'source': 'ALL_RED', 'dest': 'EW_THROUGH'},
+]
 
 # Global "CONSTANTS" to Controller.py
-UNIT_TEST_MODE = True
+TIME_STEP = 5
+UNIT_TEST_MODE = False
 DEBUG_STATEMENTS_ON = True
 THIS_CODES_FILENAME = os.path.basename(__file__)
-DebugObject = Debug(DEBUG_STATEMENTS_ON, THIS_CODES_FILENAME)
+
+DebugObject = Debug.Debug(DEBUG_STATEMENTS_ON, THIS_CODES_FILENAME)
 
 
 def UnitTest(testCase):
+    """Update this function to test new edge cases
+
+    Args:
+        testCase (INTEGER): Discrete test number to run
+    """
 
     if(testCase == 1):
         randomSensors = GetActiveVehicleSensors()
         DebugObject.Dprint(randomSensors)
     elif(testCase == 2):
-        TrafficLightObjectList = TrafficLight(GC.USA_INTERSECTION_ID, 1, GC.GREEN)
-        TrafficLightObjectList.append(TrafficLight(GC.USA_INTERSECTION_ID, 2, GC.RED))
-        UpdateTrafficLights(TrafficLightObjectList, nextState)
+        TrafficLightObjectList = TL.TrafficLight(GC.USA_INTERSECTION_ID, 1, GC.GREEN)
+        TrafficLightObjectList.append(TL.TrafficLight(GC.USA_INTERSECTION_ID, 2, GC.RED))
+        UpdateTrafficLights(TrafficLightObjectList, possibleStates[1])
         DebugObject.Dprint(TrafficLightObjectList.currentColor)
     elif(testCase == 3):
         print("TODO")
@@ -76,14 +100,14 @@ def UnitTest(testCase):
 
 
 def GetActiveVehicleSensors():
-    """ Update sensor List with random TRUE/FALSE items
+    """ Update sensor List with random TRUE/FALSE items to simulate traffic flow
         FALSE == 0 which means NO CAR IS ABOVE SENSOR
 
     Args:
         NONE
 
     Returns:
-        [List]: [description]
+        [List]: New random sensors List
     """
     sensors = [0] * GC.LANE_COUNT
     random.seed(datetime.datetime.now())
@@ -94,64 +118,118 @@ def GetActiveVehicleSensors():
     return sensors
 
 
-def UpdateTrafficLights(TrafficLightObjectList, nextState):
-    """Update List of objects
+def UpdateTrafficLights(TrafficLightObjectList, controlSystem, prevState):
+    """Update TrafficLight Objects
 
     Args:
-        TrafficLightObjectList ([type]): [description]
-        nextState ([type]): [description]
+        TrafficLightObjectList (List): [description]
+        controlSystem (Intersection Object)
+        nextState (List): [description]
     """
-    if(nextState == 0):
-        for i in range(1, GC.LANE_COUNT+1):
+
+    if(controlSystem.state == 'ALL_RED'):
+        for i in range(GC.LANE_COUNT):
             TrafficLightObjectList[i].turnRed()
-    if(nextState == 1):
+
+    if(controlSystem.state == 'NS_TURNING'):
+        for i in range(GC.LANE_COUNT):
+            TrafficLightObjectList[i].turnRed()
+        time.sleep(GC.RED_TO_GREEN_SAFETY_DELAY)
         TrafficLightObjectList[GC.TL_SOUTHEAST_TURNINGLANE].turnGreen()
         TrafficLightObjectList[GC.TL_NORTHWEST_TURNINGLANE].turnGreen()
-    if(nextState == 2):
-        TrafficLightObjectList[GC.TL_SOUTHEAST_TURNINGLANE].turnRed()
-        TrafficLightObjectList[GC.TL_NORTHWEST_TURNINGLANE].turnRed()
 
+    if(controlSystem.state == 'NS_THROUGH'):
+        for i in range(GC.LANE_COUNT):
+            TrafficLightObjectList[i].turnRed()
+        time.sleep(GC.RED_TO_GREEN_SAFETY_DELAY)
         TrafficLightObjectList[GC.TL_SOUTHSOUTH_THROUGHLANE].turnGreen()
         TrafficLightObjectList[GC.TL_NORTHNORTH_THROUGHLANE].turnGreen()
-    if(nextState == 3):
-        print("TODO")
-    if(nextState == 4):
-        print("TODO")
+
+    if(controlSystem.state == 'EW_TURNING'):
+        for i in range(GC.LANE_COUNT):
+            TrafficLightObjectList[i].turnRed()
+        time.sleep(GC.RED_TO_GREEN_SAFETY_DELAY)
+        TrafficLightObjectList[GC.TL_WESTSOUTH_TURNINGLANE].turnGreen()
+        TrafficLightObjectList[GC.TL_EASTNORTH_TURNINGLANE].turnGreen()
+
+    if(controlSystem.state == 'EW_THROUGH'):
+        for i in range(GC.LANE_COUNT):
+            TrafficLightObjectList[i].turnRed()
+        time.sleep(GC.RED_TO_GREEN_SAFETY_DELAY)
+        TrafficLightObjectList[GC.TL_WESTWEST_THROUGHLANE].turnGreen()
+        TrafficLightObjectList[GC.TL_EASTEAST_THROUGHLANE].turnGreen()
+
+    if(prevState != controlSystem.state):
+        print("STATE = " + str(controlSystem.state))
+        for i in range(GC.LANE_COUNT):
+            print("TRAFFIC LIGHT # = ", i, " is " + str(TrafficLightObjectList[i].getColor()))
+        print("\n\n")
 
 
-def main():
-    # Define the 8 lane traffic light intersection outlined in take-home_pdf_specification.pdf
-    TrafficLightObjectList = []
-    for i in range(1, GC.LANE_COUNT+1):
-        TrafficLightObjectList.append(TrafficLight(GC.USA_INTERSECTION_ID, i, GC.RED))
+def Main():
+    DebugObject = Debug.Debug(DEBUG_STATEMENTS_ON, THIS_CODES_FILENAME)
 
-    Debug.Dprint("STARTING LOOP")
-    startTime = time.time()  # seconds since January 1, 1970, 00:00:00 at UTC is epoch DONT use on 32-bit systems
+    # Define 8 lane traffic light intersection with inital state outlined in take-home_pdf_specification.pdf
+    TrafficLightObjectList = [TL.TrafficLight(GC.NULL_ID, GC.NULL_INDEX, GC.RED)] * 8
 
-    nextState = possibleStates[0]
+    TrafficLightObjectList[0] = TL.TrafficLight(GC.USA_INTERSECTION_ID, GC.TL_SOUTHSOUTH_THROUGHLANE, GC.RED)
+    TrafficLightObjectList[1] = TL.TrafficLight(GC.USA_INTERSECTION_ID, GC.TL_SOUTHEAST_TURNINGLANE, GC.RED)
+    TrafficLightObjectList[2] = TL.TrafficLight(GC.USA_INTERSECTION_ID, GC.TL_WESTWEST_THROUGHLANE, GC.GREEN)
+    TrafficLightObjectList[3] = TL.TrafficLight(GC.USA_INTERSECTION_ID, GC.TL_WESTSOUTH_TURNINGLANE, GC.RED)
+    TrafficLightObjectList[4] = TL.TrafficLight(GC.USA_INTERSECTION_ID, GC.TL_NORTHNORTH_THROUGHLANE, GC.RED)
+    TrafficLightObjectList[5] = TL.TrafficLight(GC.USA_INTERSECTION_ID, GC.TL_NORTHWEST_TURNINGLANE, GC.RED)
+    TrafficLightObjectList[6] = TL.TrafficLight(GC.USA_INTERSECTION_ID, GC.TL_EASTEAST_THROUGHLANE, GC.GREEN)
+    TrafficLightObjectList[7] = TL.TrafficLight(GC.USA_INTERSECTION_ID, GC.TL_EASTNORTH_TURNINGLANE, GC.RED)
 
-    while():
-        loopTime = (startTime - time.time()) % GC.MAX_CYCLE_TIME
+    controlSystem = Intersection.Intersection()
+    Machine(model=controlSystem, states=possibleStates, transitions=trafficFlowTransitions, initial='ALL_RED')
+
+    # Default to East/West through as the first State Machine state
+    controlSystem.start()
+    DebugObject.Dprint(controlSystem.state)
+    prevState = 'ALL_RED'
+
+    loopTime = 0
+    DebugObject.Dprint("STARTING LOOP")
+    while(True):
+        loopTime = (loopTime + TIME_STEP)
+
         sensors = GetActiveVehicleSensors()
+        DebugObject.Dprint(loopTime)
+        DebugObject.Dprint("SENSOR STATE = " + str(sensors))
+        prevState = controlSystem.state
 
-        if(not sensors[GC.TL_SOUTHEAST_TURNINGLANE] and not sensors[GC.TL_NORTHWEST_TURNINGLANE] or loopTime > GC.NS_TURNING_MAX):
-            nextState = possibleStates[2]
+        if((not sensors[GC.TL_SOUTHEAST_TURNINGLANE] and not sensors[GC.TL_NORTHWEST_TURNINGLANE] and loopTime > GC.NS_TURNING_MIN) or loopTime > GC.NS_TURNING_MAX):
+            if(sensors[GC.TL_NORTHNORTH_THROUGHLANE] or sensors[GC.TL_SOUTHSOUTH_THROUGHLANE]):
+                if(controlSystem.state == 'NS_TURNING'):
+                    loopTime = 0
+                    controlSystem.NS_THROUGH_ONLY()
 
-        if(not sensors[GC.TL_SOUTHSOUTH_THROUGHLANE] and not sensors[GC.TL_NORTHNORTH_THROUGHLANE] or loopTime > GC.NS_THROUGH_MAX):
-            nextState = possibleStates[3]
+        if((not sensors[GC.TL_SOUTHSOUTH_THROUGHLANE] and not sensors[GC.TL_NORTHNORTH_THROUGHLANE] and loopTime > GC.NS_THROUGH_MIN) or loopTime > GC.NS_THROUGH_MAX):
+            if(sensors[GC.TL_SOUTHEAST_TURNINGLANE] or sensors[GC.TL_NORTHWEST_TURNINGLANE]):
+                if(controlSystem.state == 'NS_THROUGH'):
+                    loopTime = 0
+                    controlSystem.ALLOW_EW_TURNING()
 
-        if(not sensors[GC.TL_WESTSOUTH_TURNINGLANE] and not sensors[GC.TL_EASTNORTH_TURNINGLANE] or loopTime > GC.EW_TURNING_MAX):
-            nextState = possibleStates[4]
+        if((not sensors[GC.TL_WESTSOUTH_TURNINGLANE] and not sensors[GC.TL_EASTNORTH_TURNINGLANE] and loopTime > GC.EW_TURNING_MIN) or loopTime > GC.EW_TURNING_MAX):
+            if(sensors[GC.TL_WESTWEST_THROUGHLANE] or sensors[GC.TL_EASTEAST_THROUGHLANE]):
+                if(controlSystem.state == 'EW_TURNING'):
+                    loopTime = 0
+                    controlSystem.EW_THROUGH_ONLY()
 
-        if(not sensors[GC.TL_WESTWEST_THROUGHLANE] and not sensors[GC.TL_EASTEAST_THROUGHLANE] or loopTime > GC.EW_THROUGH_MAX):
-            nextState = possibleStates[1]
+        if((not sensors[GC.TL_WESTWEST_THROUGHLANE] and not sensors[GC.TL_EASTEAST_THROUGHLANE] and loopTime > GC.EW_THROUGH_MIN) or loopTime > GC.EW_THROUGH_MAX):
+            if(sensors[GC.TL_EASTNORTH_TURNINGLANE] or sensors[GC.TL_WESTSOUTH_TURNINGLANE]):
+                if(controlSystem.state == 'EW_THROUGH'):
+                    loopTime = 0
+                    controlSystem.ALLOW_NS_TURNING()
 
-        UpdateTrafficLights(TrafficLightObjectList, nextState)
+        UpdateTrafficLights(TrafficLightObjectList, controlSystem, prevState)
 
-        time.sleep(0.5) # Make while loop last 1 second
+        time.sleep(1)
+
 
 if __name__ == "__main__":
     if(UNIT_TEST_MODE):
         UnitTest(2)
     else:
-        main()
+        Main()

@@ -4,7 +4,7 @@ __author__  = "Blaze Sanders"
 __email__   = "blaze.d.a.sanders@gmail.com"
 __company__ = "Loft Orbitial"
 __status__  = "Development"
-__date__    = "Late Updated: 2021-12-08"
+__date__    = "Late Updated: 2021-12-12"
 __doc__     = "Simple traffic light object location and color instance variables"
 """
 
@@ -14,7 +14,7 @@ import os
 
 try:
     # Generate a timestamped .txt data logging file and custom terminal debugging output
-    import Debug
+    import Debug as Debug
 
     # Useful global constants used across all TesMuffler code
     import GlobalConstant as GC
@@ -26,26 +26,29 @@ except ImportError:
 
 class TrafficLight:
 
-    # Class variable to turn terminal and data logging print statements on and off
-    DEBUG_STATEMENTS_ON = True
+    # Class variable to turn terminal and data logging print statements on and off within TrafficLight.py
+    DEBUG_STATEMENTS_ON = False
+    THIS_CODES_FILENAME = os.path.basename(__file__)
 
     def __init__(self, locationID, intersectionLocationIndex, initialColor=GC.RED):
-        """[summary]
+        """Constructor to initialize an TrafficLight object
 
         Args:
-            locationID ([INT]): [description]
-            intersectionLocationIndex ([FLOAT]): [description]
-            initialColor ([INT], optional): [description]. Defaults to GC.RED.
+            locationID (INTEGER): ID label for the physical location of an intersection
+            intersectionLocationIndex (INTEGER): Index of a traffic light within a physical location ID
+            initialColor (INTEGER, optional): Color that a traffic light is displaying. Defaults to GC.RED
         """
         self.physicalLocation = locationID
         self.locationIndex = intersectionLocationIndex
         self.currentColor = initialColor
 
-        thisCodesFilename = os.path.basename(__file__)
-        self.DebugObject = Debug(TrafficLight.DEBUG_STATEMENTS_ON, thisCodesFilename)
+        self.DebugObject = Debug.Debug(TrafficLight.DEBUG_STATEMENTS_ON, TrafficLight.THIS_CODES_FILENAME)
 
     def turnGreen(self):
         self.currentColor = GC.GREEN
 
     def turnRed(self):
         self.currentColor = GC.RED
+
+    def getColor(self):
+        return self.currentColor

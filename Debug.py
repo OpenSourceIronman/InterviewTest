@@ -4,12 +4,12 @@ __author__  = "Blaze Sanders"
 __email__   = "blaze.d.a.sanders@gmail.com"
 __company__ = "Robotic Beverage Technologies, Inc"
 __status__  = "Development"
-__date__    = "Late Updated: 2021-05-23"
+__date__    = "Late Updated: 2021-12-12"
 __doc__     = "Generate a timestamped .txt data logging file and custom terminal debugging output"
 """
 
 # Allow program to create GMT and local timestamps
-from time import gmtime, strftime
+from time import strftime
 
 # Error code global CONSTANTS
 OBJECT_CREATION_ERROR = 0
@@ -25,46 +25,43 @@ USER_ERROR = 6
 # Exit case CONSTANTS for debug logs
 OK = 0
 TORQUE_EXIT_CASE = -1
-DEPTH_EXIT_CASE  = -2
-TIME_EXIT_CASE   = -3
+DEPTH_EXIT_CASE = -2
+TIME_EXIT_CASE = -3
 
 
 class Debug:
 
     def __init__(self, initState, pythonClass):
         """
-        Constructor to initialize a Debug object, which determines if debug statement should print and what file the developer asked for Debug statements in
+        Constructor to initialize a Debug object, which determines if debug statement should print and what file the developer asked
+        for Debug statements in
 
-        Key arguments:
-        initState -- Boolean variable, which if True causes debug statements to be printed to the terminal
-        pythonClass -- String variable, of Python class or file (Driver.py) calling Debug() to create object
+        Args:
+            initState (Boolean): if True causes debug statements to be printed to the terminal
+            pythonClass (String): Python class or file (e.g. Driver.py) calling Debug() to create a new object
 
-        Return value:
-        Newly created Debug() object
+        Returns:
+            (Object): Newly created Debug() object
         """
 
-        self.f = open('DataLog.txt','r+')    # Open read and append at end write access to .txt file
+        self.f = open('DataLog.txt', 'r+')    # Open read and append at end write access to .txt file
         self.pythonClass = pythonClass
 
         # Toogle initial debug statements ON (true) or Off (false)
-        if(initState == False):
+        if(initState == False):               # NOQA: E712
             self.DEBUG_STATEMENTS_ON = False
         else:
             self.DEBUG_STATEMENTS_ON = True
             print("DEBUG STATEMENTS ARE ON INSIDE THE " + pythonClass + " CLASS")
 
-
     def GetMode(self):
-	    return self.DEBUG_STATEMENTS_ON
-
+        return self.DEBUG_STATEMENTS_ON
 
     def TurnOnDebugMode(self):
         self.DEBUG_STATEMENTS_ON = True
 
-
     def TurnOffDebugMode(self):
         self.DEBUG_STATEMENTS_ON = False
-
 
     def CloseFile(self):
         """
@@ -79,45 +76,40 @@ class Debug:
 
         self.f.close()
 
-
     def Dprint(self, logMessage):
         """
         Debug print to terminal only
         Calls standard Python 3 print("X") statement if "DEBUG_STATEMENTS_ON" class variable is TRUE
 
         Key arguments:
-        logMessage -- String variable, of custom text to print to terminal
+        logMessage --  Data to print to the terminal
 
         Return value:
         NOTHING
         """
 
         if(self.DEBUG_STATEMENTS_ON):
-            print(self.pythonClass + " MESSAGE: " + logMessage + "\n")
-        #else:
-        #    print("\n") # PRINT NEW LINE / DO NOTHING
+            print(self.pythonClass + " MESSAGE: " + str(logMessage) + "\n")
 
     def Lprint(self, logMessage):
-       """
-       Log debugging print with LOCAL TIME to both a datalog.txt file and the terminal
-       Calls Dprint() and standard Python 3 write() if class variable is TRUE
+        """
+        Log debugging print with LOCAL TIME to both a datalog.txt file and the terminal
+        Calls Dprint() and standard Python 3 write() if class variable is TRUE
 
-       @link - https://docs.python.org/3/library/time.html#time.strftime
+        @link - https://docs.python.org/3/library/time.html#time.strftime
 
-       Key arguments:
-       logMessage --
+        Key arguments:
+        logMessage -- Data to print to the terminal and log to text file
 
-       Return value:
-       NOTHING
-       """
+        Return value:
+        NOTHING
+        """
 
-       if(self.DEBUG_STATEMENTS_ON):
-           self.Dprint(logMessage + " on " + strftime("%c") + "\n")
+        if(self.DEBUG_STATEMENTS_ON):
+            self.Dprint(str(logMessage) + " on " + strftime("%c") + "\n")
 
-           self.f.write(self.pythonClass + " DAY & TIME: " + strftime("%c") + "\n")
-           self.f.write(self.pythonClass + " MESSAGE: " + logMessage + "\n")
-       #else:
-       #     print("\n") # PRINT NEW LINE / DO NOTHING
+            self.f.write(self.pythonClass + " DAY & TIME: " + strftime("%c") + "\n")
+            self.f.write(self.pythonClass + " MESSAGE: " + str(logMessage) + "\n")
 
 
 if __name__ == "__main__":
