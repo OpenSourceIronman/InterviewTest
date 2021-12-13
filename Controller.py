@@ -26,13 +26,6 @@ import random
 # https://docs.python.org/3/library/os.html
 import os
 
-# Allows for the creation of a GUI web app that communicates with python backend code
-# Saves HTML files in a folder called "templates" in the same folder as your Flask code
-# Saves user state / data across page refreshes and crashes, by using browser cookies
-from flask import Flask, render_template, session
-
-# Click on HTML table to update GUI / CSS classes
-import pyautogui
 
 try:
     # Generate a timestamped .txt data logging file and custom terminal debugging output
@@ -69,6 +62,7 @@ trafficFlowTransitions = [
 
     {'trigger': 'start', 'source': 'ALL_RED', 'dest': 'EW_THROUGH'},
 ]
+
 
 # Global "CONSTANTS" to Controller.py
 TIME_STEP = 5
@@ -115,6 +109,7 @@ def GetActiveVehicleSensors():
     for i in range(GC.LANE_COUNT):
         sensors[i] = random.randint(0, 1)
 
+    # TODO: Intersection.GUI_Update(GC.SENSORS_GUI, sensors)
     return sensors
 
 
@@ -163,6 +158,8 @@ def UpdateTrafficLights(TrafficLightObjectList, controlSystem, prevState):
         print("STATE = " + str(controlSystem.state))
         for i in range(GC.LANE_COUNT):
             print("TRAFFIC LIGHT # = ", i, " is " + str(TrafficLightObjectList[i].getColor()))
+
+        # TODO: Intersection.GUI_Update(GC.TRAFFIC_LIGHT_GUI, TrafficLightObjectList)
         print("\n\n")
 
 
@@ -199,33 +196,31 @@ def Main():
         DebugObject.Dprint("SENSOR STATE = " + str(sensors))
         prevState = controlSystem.state
 
-        if((not sensors[GC.TL_SOUTHEAST_TURNINGLANE] and not sensors[GC.TL_NORTHWEST_TURNINGLANE] and loopTime > GC.NS_TURNING_MIN) or loopTime > GC.NS_TURNING_MAX):
+        if((not sensors[GC.TL_SOUTHEAST_TURNINGLANE] and not sensors[GC.TL_NORTHWEST_TURNINGLANE] and loopTime > GC.NS_TURNING_MIN) or loopTime > GC.NS_TURNING_MAX):  # NOQA: E501
             if(sensors[GC.TL_NORTHNORTH_THROUGHLANE] or sensors[GC.TL_SOUTHSOUTH_THROUGHLANE]):
                 if(controlSystem.state == 'NS_TURNING'):
                     loopTime = 0
                     controlSystem.NS_THROUGH_ONLY()
 
-        if((not sensors[GC.TL_SOUTHSOUTH_THROUGHLANE] and not sensors[GC.TL_NORTHNORTH_THROUGHLANE] and loopTime > GC.NS_THROUGH_MIN) or loopTime > GC.NS_THROUGH_MAX):
+        if((not sensors[GC.TL_SOUTHSOUTH_THROUGHLANE] and not sensors[GC.TL_NORTHNORTH_THROUGHLANE] and loopTime > GC.NS_THROUGH_MIN) or loopTime > GC.NS_THROUGH_MAX):  # NOQA: E501
             if(sensors[GC.TL_SOUTHEAST_TURNINGLANE] or sensors[GC.TL_NORTHWEST_TURNINGLANE]):
                 if(controlSystem.state == 'NS_THROUGH'):
                     loopTime = 0
                     controlSystem.ALLOW_EW_TURNING()
 
-        if((not sensors[GC.TL_WESTSOUTH_TURNINGLANE] and not sensors[GC.TL_EASTNORTH_TURNINGLANE] and loopTime > GC.EW_TURNING_MIN) or loopTime > GC.EW_TURNING_MAX):
+        if((not sensors[GC.TL_WESTSOUTH_TURNINGLANE] and not sensors[GC.TL_EASTNORTH_TURNINGLANE] and loopTime > GC.EW_TURNING_MIN) or loopTime > GC.EW_TURNING_MAX):  # NOQA: E501
             if(sensors[GC.TL_WESTWEST_THROUGHLANE] or sensors[GC.TL_EASTEAST_THROUGHLANE]):
                 if(controlSystem.state == 'EW_TURNING'):
                     loopTime = 0
                     controlSystem.EW_THROUGH_ONLY()
 
-        if((not sensors[GC.TL_WESTWEST_THROUGHLANE] and not sensors[GC.TL_EASTEAST_THROUGHLANE] and loopTime > GC.EW_THROUGH_MIN) or loopTime > GC.EW_THROUGH_MAX):
+        if((not sensors[GC.TL_WESTWEST_THROUGHLANE] and not sensors[GC.TL_EASTEAST_THROUGHLANE] and loopTime > GC.EW_THROUGH_MIN) or loopTime > GC.EW_THROUGH_MAX):  # NOQA: E501
             if(sensors[GC.TL_EASTNORTH_TURNINGLANE] or sensors[GC.TL_WESTSOUTH_TURNINGLANE]):
                 if(controlSystem.state == 'EW_THROUGH'):
                     loopTime = 0
                     controlSystem.ALLOW_NS_TURNING()
 
         UpdateTrafficLights(TrafficLightObjectList, controlSystem, prevState)
-
-        time.sleep(1)
 
 
 if __name__ == "__main__":

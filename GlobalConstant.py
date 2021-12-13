@@ -9,10 +9,12 @@ __doc__     = "Useful global constants used for traffic light control"
 """
 
 # Traffic light color CONTSTANTS
+TRAFFIC_LIGHT_GUI = 'TRAFFIC_LIGHT_GUI'
 RED = 0
 GREEN = 1
 
 # Traffic sensor color CONSTANTS
+SENSORS_GUI = 'SENSORS_GUI'
 ORANGE = 1
 WHITE = 0
 
