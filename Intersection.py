@@ -11,13 +11,9 @@ __doc__     = "Skeleton class to initialize 'from transitions import Machine, St
 # Useful global constants used across all classes
 import GlobalConstant as GC
 
-# Allows for the creation of a GUI web app that communicates with python backend code
-# Saves HTML files in a folder called "templates" in the same folder as your Flask code
-# Saves user state / data across page refreshes and crashes, by using browser cookies
-from flask import Flask, render_template
-
-# Click on HTML table to update GUI / CSS classes
-import pyautogui
+import sys
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QApplication,  QMainWindow, QLabel
 
 
 class Intersection(object):
@@ -26,30 +22,41 @@ class Intersection(object):
 
 controlSystem = Intersection()
 
-# Make a Flask application and start running code from Main()
-app = Flask(__name__)
+newSensorsGUI = [0, 1, 1, 1, 1, 0, 0, 0]
+newTrafficLightGUI = [0, 1, 1, 1, 1, 0, 0, 0]
 
 
-@app.route('/')
-def GUI_Update(ItemsToUpdate, ObjectList):
-    HTMLtoDisplay = "TrafficSignals.html"
+def stuff():
+    app = gui("Loft Orbital Traffic Light Demo", "1000x1000")
+    app.addLabel("title", "Welcome to appJar")
+    app.setLabelBg("title", "red")
+    app.go()
+    
+    app.addLabel("blank0", "", 0, 0)
+    app.setLabelBg("blank0", "white")
+    app.addLabel("blank1", "", 0, 1)
+    app.addLabel("blank2", "", 0, 2)
+    app.addLabel("road0", "S:S", 0, 3)
+    app.addLabel("road1", "S:E", 0, 4)
+    app.addLabel("road2", "", 0, 5)
+    app.addLabel("road3", "", 0, 6)
+    app.addLabel("blank3", "", 0, 7)
+    app.addLabel("blank4", "", 0, 8)
+    app.addLabel("blank5", "", 0, 9)
+    app.setFg("white")
+    app.setLocation("CENTER")
+    app.setFont(18)
+    #app.setSticky("news")
+    #app.setExpand("both")
 
-    if(ItemsToUpdate == GC.TRAFFIC_LIGHT_GUI):
-        return render_template(HTMLtoDisplay, lightValue=ObjectList)
-    elif(ItemsToUpdate == GC.TRAFFIC_LIGHT_GUI):
-        return render_template(HTMLtoDisplay, sensorValue=ObjectList)
-    else:
-        print("ERROR UPDATING GUI")
-
-    pyautogui.moveTo(900, 500)
-    pyautogui.click()
+    #app.addImage("sign0", "Straight_100x100_180.png", )
 
 
 if __name__ == "__main__":
-    # Allow URLs to be refreshed (F5) without restarting web server after code changes
-    app.run(debug=True)
-    app.run(host='0.0.0.0')
-
-    ItemsToUpdate = [0, 1, 1, 1, 1, 0, 0, 0]
-    ObjectList = [0, 1, 1, 1, 1, 0, 0, 0]
-    GUI_Update(ItemsToUpdate, ObjectList)
+    app = QApplication(sys.argv)
+    MyPyForm = QMainWindow()
+    MyPyForm.setGeometry(1500, 1000, 3300, 2500)
+    
+    label = QLabel("Hello World", alignment=Qt.AlignCenter)
+    label.show()
+    sys.exit(app.exec_())
