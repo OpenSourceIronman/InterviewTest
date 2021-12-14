@@ -1,0 +1,226 @@
+(LoftOrbitalDevEnv) ➜  InterviewTest git:(main) ✗ python3 Controller.py 
+DEBUG STATEMENTS ARE ON INSIDE THE Controller.py CLASS
+DEBUG STATEMENTS ARE ON INSIDE THE Controller.py CLASS
+Controller.py MESSAGE: EW_THROUGH
+
+Controller.py MESSAGE: STARTING LOOP
+
+Controller.py MESSAGE: 5
+
+Controller.py MESSAGE: SENSOR STATE = [0, 0, 1, 1, 0, 0, 1, 0]
+
+Controller.py MESSAGE: 10
+
+Controller.py MESSAGE: SENSOR STATE = [0, 1, 0, 1, 1, 1, 1, 1]
+
+Controller.py MESSAGE: 15
+
+Controller.py MESSAGE: SENSOR STATE = [0, 0, 1, 1, 0, 0, 1, 0]
+
+Controller.py MESSAGE: 20
+
+Controller.py MESSAGE: SENSOR STATE = [0, 0, 1, 1, 1, 0, 1, 1]
+
+Controller.py MESSAGE: 25
+
+Controller.py MESSAGE: SENSOR STATE = [1, 0, 1, 1, 1, 1, 1, 1]
+
+Controller.py MESSAGE: 30
+
+Controller.py MESSAGE: SENSOR STATE = [1, 1, 0, 1, 1, 1, 1, 1]
+
+Controller.py MESSAGE: 35
+
+Controller.py MESSAGE: SENSOR STATE = [1, 0, 1, 1, 0, 0, 0, 1]
+
+Controller.py MESSAGE: 40
+
+Controller.py MESSAGE: SENSOR STATE = [1, 1, 0, 1, 0, 1, 1, 1]
+
+Controller.py MESSAGE: 45
+
+Controller.py MESSAGE: SENSOR STATE = [0, 0, 0, 1, 0, 0, 0, 1]     SENSORS AT INDEX 2 & 6 WENT LOW SO EW_THROUGH TRAFFIC WILL BE STOPPED
+
+STATE = NS_TURNING
+TRAFFIC LIGHT # =  0  is 0
+TRAFFIC LIGHT # =  1  is 1
+TRAFFIC LIGHT # =  2  is 0
+TRAFFIC LIGHT # =  3  is 0
+TRAFFIC LIGHT # =  4  is 0
+TRAFFIC LIGHT # =  5  is 1
+TRAFFIC LIGHT # =  6  is 0
+TRAFFIC LIGHT # =  7  is 0
+
+
+
+Controller.py MESSAGE: 5
+
+Controller.py MESSAGE: SENSOR STATE = [1, 0, 1, 1, 1, 1, 0, 1]
+
+Controller.py MESSAGE: 10
+
+Controller.py MESSAGE: SENSOR STATE = [1, 1, 0, 1, 1, 0, 1, 0]
+
+Controller.py MESSAGE: 15
+
+Controller.py MESSAGE: SENSOR STATE = [1, 0, 0, 1, 0, 1, 1, 1]
+
+Controller.py MESSAGE: 20
+
+Controller.py MESSAGE: SENSOR STATE = [0, 1, 1, 0, 1, 0, 0, 0]
+
+Controller.py MESSAGE: 25
+
+Controller.py MESSAGE: SENSOR STATE = [0, 0, 1, 1, 1, 0, 0, 0]
+
+STATE = NS_THROUGH
+TRAFFIC LIGHT # =  0  is 1
+TRAFFIC LIGHT # =  1  is 0
+TRAFFIC LIGHT # =  2  is 0
+TRAFFIC LIGHT # =  3  is 0
+TRAFFIC LIGHT # =  4  is 1
+TRAFFIC LIGHT # =  5  is 0
+TRAFFIC LIGHT # =  6  is 0
+TRAFFIC LIGHT # =  7  is 0
+
+
+
+Controller.py MESSAGE: 5
+
+Controller.py MESSAGE: SENSOR STATE = [0, 1, 1, 0, 0, 0, 1, 0]
+
+Controller.py MESSAGE: 10
+
+Controller.py MESSAGE: SENSOR STATE = [1, 0, 0, 0, 1, 1, 0, 1]
+
+Controller.py MESSAGE: 15
+
+Controller.py MESSAGE: SENSOR STATE = [1, 0, 0, 1, 1, 0, 1, 1]
+
+Controller.py MESSAGE: 20
+
+Controller.py MESSAGE: SENSOR STATE = [1, 1, 1, 0, 0, 1, 1, 1]
+
+Controller.py MESSAGE: 25
+
+Controller.py MESSAGE: SENSOR STATE = [1, 0, 1, 1, 0, 0, 0, 0]
+
+Controller.py MESSAGE: 30
+
+Controller.py MESSAGE: SENSOR STATE = [0, 1, 0, 1, 0, 1, 1, 0]
+
+Controller.py MESSAGE: 35
+
+Controller.py MESSAGE: SENSOR STATE = [0, 1, 0, 0, 1, 1, 0, 1]
+
+Controller.py MESSAGE: 40
+
+Controller.py MESSAGE: SENSOR STATE = [1, 1, 0, 1, 0, 1, 1, 0]
+
+Controller.py MESSAGE: 45
+
+Controller.py MESSAGE: SENSOR STATE = [0, 0, 1, 0, 1, 0, 1, 0]
+
+Controller.py MESSAGE: 50
+
+Controller.py MESSAGE: SENSOR STATE = [1, 1, 0, 1, 0, 1, 0, 1]
+
+Controller.py MESSAGE: 55
+
+Controller.py MESSAGE: SENSOR STATE = [1, 0, 0, 1, 0, 0, 1, 1]
+
+Controller.py MESSAGE: 60
+
+Controller.py MESSAGE: SENSOR STATE = [0, 1, 0, 1, 0, 0, 1, 0]
+
+STATE = EW_TURNING
+TRAFFIC LIGHT # =  0  is 0
+TRAFFIC LIGHT # =  1  is 0
+TRAFFIC LIGHT # =  2  is 0
+TRAFFIC LIGHT # =  3  is 1
+TRAFFIC LIGHT # =  4  is 0
+TRAFFIC LIGHT # =  5  is 0
+TRAFFIC LIGHT # =  6  is 0
+TRAFFIC LIGHT # =  7  is 1
+
+
+
+Controller.py MESSAGE: 5
+
+Controller.py MESSAGE: SENSOR STATE = [1, 1, 0, 1, 0, 1, 0, 1]
+
+Controller.py MESSAGE: 10
+
+Controller.py MESSAGE: SENSOR STATE = [0, 0, 0, 0, 1, 0, 1, 1]
+
+Controller.py MESSAGE: 15
+
+Controller.py MESSAGE: SENSOR STATE = [1, 0, 1, 0, 1, 1, 0, 0]
+
+STATE = EW_THROUGH
+TRAFFIC LIGHT # =  0  is 0
+TRAFFIC LIGHT # =  1  is 0
+TRAFFIC LIGHT # =  2  is 1
+TRAFFIC LIGHT # =  3  is 0
+TRAFFIC LIGHT # =  4  is 0
+TRAFFIC LIGHT # =  5  is 0
+TRAFFIC LIGHT # =  6  is 1
+TRAFFIC LIGHT # =  7  is 0
+
+
+
+Controller.py MESSAGE: 5
+
+Controller.py MESSAGE: SENSOR STATE = [1, 0, 0, 0, 0, 1, 0, 0]
+
+Controller.py MESSAGE: 10
+
+Controller.py MESSAGE: SENSOR STATE = [0, 0, 1, 0, 0, 0, 0, 0]
+
+Controller.py MESSAGE: 15
+
+Controller.py MESSAGE: SENSOR STATE = [1, 0, 1, 1, 1, 1, 1, 0]
+
+Controller.py MESSAGE: 20
+
+Controller.py MESSAGE: SENSOR STATE = [0, 0, 0, 0, 0, 0, 1, 0]
+
+Controller.py MESSAGE: 25
+
+Controller.py MESSAGE: SENSOR STATE = [1, 1, 0, 0, 0, 0, 0, 0]
+
+Controller.py MESSAGE: 30
+
+Controller.py MESSAGE: SENSOR STATE = [0, 1, 0, 0, 1, 0, 0, 1]
+
+Controller.py MESSAGE: 35
+
+Controller.py MESSAGE: SENSOR STATE = [0, 0, 1, 1, 0, 0, 0, 1]
+
+Controller.py MESSAGE: 40
+
+Controller.py MESSAGE: SENSOR STATE = [0, 1, 0, 1, 1, 1, 1, 0]
+
+Controller.py MESSAGE: 45
+
+Controller.py MESSAGE: SENSOR STATE = [0, 0, 1, 0, 1, 1, 1, 1]
+
+Controller.py MESSAGE: 50
+
+Controller.py MESSAGE: SENSOR STATE = [1, 0, 0, 0, 0, 1, 0, 1]
+
+STATE = NS_TURNING
+TRAFFIC LIGHT # =  0  is 0
+TRAFFIC LIGHT # =  1  is 1
+TRAFFIC LIGHT # =  2  is 0
+TRAFFIC LIGHT # =  3  is 0
+TRAFFIC LIGHT # =  4  is 0
+TRAFFIC LIGHT # =  5  is 1
+TRAFFIC LIGHT # =  6  is 0
+TRAFFIC LIGHT # =  7  is 0
+
+
+
+Controller.py MESSAGE: 5
+
+Controller.py MESSAGE: SENSOR STATE = [1, 0, 0, 1, 1, 0, 1, 1]
