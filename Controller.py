@@ -4,7 +4,7 @@ __author__  = "Blaze Sanders"
 __email__   = "blaze.d.a.sanders@gmail.com"
 __company__ = "Loft Orbitial"
 __status__  = "Development"
-__date__    = "Late Updated: 2021-12-12"
+__date__    = "Late Updated: 2021-12-14"
 __doc__     = "Control a 4-way traffic intersection with 8 RED-GREEN lights"
 __link__    = https://github.com/OpenSourceIronman/InterviewTest
 """
@@ -34,7 +34,7 @@ try:
     # Two color (red & green) traffic light
     import TrafficLight as TL
 
-    # State Machine class with ?singelton? "pass"
+    # State Machine class with single class variable and GUI toolkit class MyFrame
     import Intersection as Intersection
 
     # Useful global constants used across all classes
@@ -77,7 +77,7 @@ def UnitTest(testCase):
     """Update this function to test new edge cases
 
     Args:
-        testCase (INTEGER): Discrete test number to run
+        testCase (Interger): Discrete test number to run
     """
 
     if(testCase == 1):
@@ -94,8 +94,8 @@ def UnitTest(testCase):
 
 
 def GetActiveVehicleSensors():
-    """ Update sensor List with random TRUE/FALSE items to simulate traffic flow
-        FALSE == 0 which means NO CAR IS ABOVE SENSOR
+    """Update sensor List with random TRUE/FALSE items to simulate traffic flow
+       FALSE == 0 which means NO CAR IS ABOVE SENSOR
 
     Args:
         NONE
@@ -114,12 +114,12 @@ def GetActiveVehicleSensors():
 
 
 def UpdateTrafficLights(TrafficLightObjectList, controlSystem, prevState):
-    """Update TrafficLight Objects
+    """Update TrafficLight objects and print them to terminal after State Machine state changes
 
     Args:
-        TrafficLightObjectList (List): [description]
-        controlSystem (Intersection Object)
-        nextState (List): [description]
+        TrafficLightObjectList (List): TrafficLight.py objects used to hold color data
+        controlSystem (Intersection class variable): Model being used in State Machine
+        prevState (List): Previous state of State Machine last time this function was called
     """
 
     if(controlSystem.state == 'ALL_RED'):
