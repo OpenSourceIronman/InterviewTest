@@ -1,4 +1,4 @@
-README.md
+WARNING: On MacOS 12.0.1 I had to install WxPython on my whole system using "pip3 install wxpython" outside any VirtualEnv to bypass some black screen issues <br>
 
 VirtualEnv was used to create an isolated Python environment. Since Python 3.3 a subset of VirtualEnv has been integrated into the standard library (See https://virtualenv.pypa.io/en/latest/). The necessary virtual environment can be configured on your system by using the terminal command "source LoftOrbitalDevEnv/bin/activate" while in the "InterviewTest" directory, or by running the terminal command "pip3 install transitions" which will install the only needed dependency on your system. <br>
 
