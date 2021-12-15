@@ -1,1 +1,9 @@
+# Ignore MacOS meta data / custom attributes of for directories
 .DS_Store
+
+# Ignore cpython complied code
+.pyc
+__pycache__
+
+# Ignore an extra helper class that is not fully documented
+MyFrame.py

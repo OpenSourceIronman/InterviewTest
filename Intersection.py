@@ -11,15 +11,9 @@ __doc__     = "Skeleton class to initialize 'from transitions import Machine, St
 # Useful global constants used across all classes
 import GlobalConstant as GC
 
-# Allows for the creation of a GUI web app that communicates with python backend code
-# Saves HTML files in a folder called "templates" in the same folder as your Flask code
-# Saves user state / data across page refreshes and crashes, by using browser cookies
-from flask import Flask, render_template
+import wx
+import wx.grid
 
-# Click on HTML table to update GUI / CSS classes
-import pyautogui
-
-import PySimpleGUI as sg
 
 class Intersection(object):
     pass
@@ -27,58 +21,87 @@ class Intersection(object):
 
 controlSystem = Intersection()
 
-# Make a Flask application and start running code from Main()
-app = Flask(__name__)
+class MyFrame(wx.Frame):
+    def __init__(self):
+        super().__init__(parent=None, title='Loft Orbital Traffic Light Demo', size=(1000, 1000))
+        panel = wx.Panel(self, size=(1000, 1000))
+        panel.SetBackgroundColour(wx.BLACK)
+
+        self.grid = wx.grid.Grid(self, -1, size=(1000, 1000), style=wx.ALIGN_CENTER_VERTICAL)
+        self.grid.CreateGrid(10, 10)
+        for i in range(10):
+            self.grid.SetRowSize(i, 100)
+            self.grid.SetColSize(i, 100)
+        self.grid.HideColLabels()
+        self.grid.HideRowLabels()
 
 
-@app.route('/')
-def GUI_Update(ItemsToUpdate, ObjectList):
-    HTMLtoDisplay = "TrafficSignals.html"
+        # Change color of cells not part of intersection
+        for row in range(3):
+            for col in range(3):
+                self.grid.SetCellBackgroundColour(row, col, wx.WHITE)
+            for col in range(7, 10):
+                self.grid.SetCellBackgroundColour(row, col, wx.WHITE)
+                
+        for row in range(7, 10):
+            for col in range(3):
+                self.grid.SetCellBackgroundColour(row, col, wx.WHITE)
+            for col in range(7, 10):
+                self.grid.SetCellBackgroundColour(row, col, wx.WHITE)
 
-    if(ItemsToUpdate == GC.TRAFFIC_LIGHT_GUI):
-        return render_template(HTMLtoDisplay, lightValue=ObjectList)
-    elif(ItemsToUpdate == GC.TRAFFIC_LIGHT_GUI):
-        return render_template(HTMLtoDisplay, sensorValue=ObjectList)
-    else:
-        print("ERROR UPDATING GUI")
-
-    pyautogui.moveTo(900, 500)
-    pyautogui.click()
-
-
-<<<<<<< Updated upstream
-if __name__ == "__main__":
-    # Allow URLs to be refreshed (F5) without restarting web server after code changes
-    app.run(debug=True)
-    app.run(host='0.0.0.0')
-
-    ItemsToUpdate = [0, 1, 1, 1, 1, 0, 0, 0]
-    ObjectList = [0, 1, 1, 1, 1, 0, 0, 0]
-    GUI_Update(ItemsToUpdate, ObjectList)
-=======
-    app = QtWidgets.QApplication(sys.argv)
-    #https://doc.qt.io/qtforpython/PySide6/QtGui/index.html#module-PySide6.QtGui
-    #https://stackoverflow.com/questions/52517516/pyqt5-fixed-window-size
-    label = QLabel("Hello World", alignment=Qt.AlignCenter)
-    label.show()
-    sys.exit(app.exec_())
+        self.Show()
+        
+    def GUI_Update(self, grid, sensorList, trafficLightList):
     
+        # All in one for loop to keep at O(n) and not O(n^2)
+        for i in range(GC.LANE_COUNT):
+            if(sensorList[i]):
+                sensorColor = wx.YELLOW
+            else:
+                sensorColor = wx.BLACK
+                
+            if(trafficLightList[i]):
+                lightColor = wx.GREEN
+            else:
+                lightColor = wx.RED
+                    
+            if(i == GC.TL_SOUTHSOUTH_THROUGHLANE):
+                self.grid.SetCellBackgroundColour(2, 3, sensorColor)
+                self.grid.SetCellBackgroundColour(7, 3, lightColor)
+            if(i == GC.TL_SOUTHEAST_TURNINGLANE):
+                self.grid.SetCellBackgroundColour(2, 4, sensorColor)
+                self.grid.SetCellBackgroundColour(7, 4, lightColor)
+                
+            if(i == GC.TL_WESTWEST_THROUGHLANE):
+                self.grid.SetCellBackgroundColour(3, 7, sensorColor)
+                self.grid.SetCellBackgroundColour(3, 2, lightColor)
+            if(i == GC.TL_WESTSOUTH_TURNINGLANE):
+                self.grid.SetCellBackgroundColour(4, 7, sensorColor)
+                self.grid.SetCellBackgroundColour(4, 2, lightColor)
+
+            if(i == GC.TL_NORTHNORTH_THROUGHLANE):
+                self.grid.SetCellBackgroundColour(7, 6, sensorColor)
+                self.grid.SetCellBackgroundColour(2, 6, lightColor)
+            if(i == GC.TL_NORTHWEST_TURNINGLANE):
+                self.grid.SetCellBackgroundColour(7, 5, sensorColor)
+                self.grid.SetCellBackgroundColour(2, 5, lightColor)
+            if(i == GC.TL_EASTEAST_THROUGHLANE):
+                self.grid.SetCellBackgroundColour(6, 2, sensorColor)
+                self.grid.SetCellBackgroundColour(6, 7, lightColor)
+            if(i == GC.TL_EASTNORTH_TURNINGLANE):
+                self.grid.SetCellBackgroundColour(5, 2, sensorColor)
+                self.grid.SetCellBackgroundColour(5, 7, lightColor)
+                
+                
+                
 
 if __name__ == "__main__":
-
-    sg.theme('DarkAmber')   # Add a touch of color
-
-    # All the stuff inside your window.
-    layout = [[sg.Text('Some text on Row 1')], [sg.Text('Enter something on Row 2'), sg.InputText()], [sg.Button('Ok'), sg.Button('Cancel')]]
-
-    # Create the Window
-    window = sg.Window('Loft Orbital Traffic Light Demo', layout)
-    # Event Loop to process "events" and get the "values" of the inputs
-    while True:
-        event, values = window.read()
-        if event == sg.WIN_CLOSED or event == 'Cancel':  # if user closes window or clicks cancel
-            break
-        print('You entered ', values[0])
-
-    window.close()
->>>>>>> Stashed changes
+    
+    app = wx.App()
+    frame = MyFrame()
+    
+    sensorList  = [0, 0, 0, 1, 1, 1, 0, 1]
+    trafficLightList = [0, 1, 0, 0, 0, 1, 0, 0]
+    
+    frame.GUI_Update(frame.grid, sensorList, trafficLightList)
+    app.MainLoop()
