@@ -80,7 +80,7 @@ def UnitTest(testCase):
 
     if(testCase == 1):
         randomSensors = GetActiveVehicleSensors()
-        DebugObject.Dprint(randomSensors)
+        print(randomSensors)
     elif(testCase == 2):
         TrafficLightObjectList = TL.TrafficLight(GC.USA_INTERSECTION_ID, 1, GC.GREEN)
         TrafficLightObjectList.append(TL.TrafficLight(GC.USA_INTERSECTION_ID, 2, GC.RED))
