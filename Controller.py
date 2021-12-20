@@ -70,8 +70,6 @@ UNIT_TEST_MODE = False
 DEBUG_STATEMENTS_ON = True
 THIS_CODES_FILENAME = os.path.basename(__file__)
 
-DebugObject = Debug.Debug(DEBUG_STATEMENTS_ON, THIS_CODES_FILENAME)
-
 
 def UnitTest(testCase):
     """Update this function to test new edge cases
@@ -87,7 +85,7 @@ def UnitTest(testCase):
         TrafficLightObjectList = TL.TrafficLight(GC.USA_INTERSECTION_ID, 1, GC.GREEN)
         TrafficLightObjectList.append(TL.TrafficLight(GC.USA_INTERSECTION_ID, 2, GC.RED))
         UpdateTrafficLights(TrafficLightObjectList, possibleStates[1])
-        DebugObject.Dprint(TrafficLightObjectList.currentColor)
+        print(TrafficLightObjectList.currentColor)
     elif(testCase == 3):
         print("TODO")
         assert GC.RED == 0
